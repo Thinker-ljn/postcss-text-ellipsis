@@ -2,9 +2,12 @@ var postcss = require('postcss')
 
 var plugin = require('./')
 
-function run (input, output, opts) {
+function startProcess (input, opts) {
   opts = opts || {}
-  return postcss([plugin(opts)]).process(input, {from: undefined}).then(function (result) {
+  return postcss([plugin(opts)]).process(input, {from: undefined})
+}
+function run (input, output, opts) {
+  return startProcess(input, opts).then(function (result) {
     expect(result.css).toEqual(output)
     expect(result.warnings()).toHaveLength(0)
   })
@@ -38,4 +41,11 @@ it('test 4', function () {
     '.rule {ellipsis: 60px block max;}',
     '.rule {display: block;max-width: 60px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}'
   )
+})
+
+it('test error', function () {
+  var input ='.rule {ellipsis: block max;}'
+  return expect(startProcess (input))
+  .rejects
+  .toThrow(plugin.errorMessage)
 })

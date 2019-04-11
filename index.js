@@ -1,6 +1,6 @@
 var postcss = require('postcss')
 var regx = /^(\d+px|0)(( max( block)?)|( block( max)?))?$/
-
+var errorMessage = 'Value Must Be Match ' + regx.toString()
 module.exports = postcss.plugin('postcss-text-ellipsis', function () {
   // Work with options here
 
@@ -11,7 +11,7 @@ module.exports = postcss.plugin('postcss-text-ellipsis', function () {
       root.walkDecls('ellipsis', function (decl) {
         var value = decl.value
         if (!regx.test(value)) {
-          throw decl.error('Value Must Be Match ' + regx.toString())
+          throw decl.error(errorMessage)
         }
         var props = [{
           prop: 'display',
@@ -35,3 +35,5 @@ module.exports = postcss.plugin('postcss-text-ellipsis', function () {
     })
   }
 })
+
+module.exports.errorMessage = errorMessage
